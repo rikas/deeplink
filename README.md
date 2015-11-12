@@ -1,9 +1,5 @@
 # Deeplink
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/deeplink`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +18,48 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Parsing a deep link
+
+Just call `Deeplink.parse` with a deep link String and then you can read the scheme and path.
+
+```ruby
+deeplink = Deeplink.parse('foursquare://checkins/12932')
+deeplink.scheme # => "foursquare"
+deeplink.path   # => "/checkins/12932"
+deeplink.to_s   # => "foursquare://checkins/12932"
+```
+
+### Query string
+
+To get the query parameters of a link use `query` method.
+
+```ruby
+deeplink = Deeplink.parse('foursquare://checkins/209823?test=true')
+deeplink.query # => { :test => "true" }
+```
+
+#### Adding a query parameter
+
+You can add one or more query parameters sending a Hash to `add_query`.
+
+```ruby
+deeplink = Deeplink.parse('foursquare://checkins/20982')
+deeplink.add_query(foo: 'bar')   # => { :foo => "bar" }
+deeplink.to_s                    # => "foursquare://checkins/20982?foo=bar"
+
+deeplink = Deeplink.parse('foursquare://checkins/20982')
+deeplink.add_query(foo: 'bar', biz: 'baz') # => { :foo => "bar", :biz => "baz" }
+deeplink.to_s                              # => "foursquare://checkins/20982?foo=bar&biz=baz"
+```
+
+#### Removing a query parameter
+
+To remove query parameters call `remove_query` with the key that you want to remove.
+
+```ruby
+deeplink = Deeplink.parse('foursquare://checkins/20982?foo=bar')
+deeplink.remove_query(:foo) # => "bar"
+deeplink.to_s               # => "foursquare://checkins/20982"
 
 ## Development
 
@@ -32,10 +69,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/deeplink.
+Bug reports and pull requests are welcome on GitHub at https://github.com/rikas/deeplink.
 
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
