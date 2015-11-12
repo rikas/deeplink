@@ -60,6 +60,7 @@ To remove query parameters call `remove_query` with the key that you want to rem
 deeplink = Deeplink.parse('foursquare://checkins/20982?foo=bar')
 deeplink.remove_query(:foo) # => "bar"
 deeplink.to_s               # => "foursquare://checkins/20982"
+```
 
 ## Development
 
