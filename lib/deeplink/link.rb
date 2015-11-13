@@ -107,7 +107,7 @@ module Deeplink
     def parse_query(query_str)
       return unless query_str
 
-      query_str.scan(/([[:alnum:]]+)=([[:alnum:]]+)/).to_h
+      query_str.scan(/([^&=]+)=([^&#{}]*)/).to_h
     end
   end
 end

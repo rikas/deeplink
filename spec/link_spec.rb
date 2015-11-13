@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe Link do
+  it 'reads query keys with strange characters' do
+    link = 'deep://directions?_id=1'
+
+    deeplink = described_class.new(link)
+
+    expect(deeplink.query).to eq(_id: '1')
+  end
+
+  it 'reads query values with strange characters' do
+    link = 'deep://directions?id=_-1P'
+
+    deeplink = described_class.new(link)
+
+    expect(deeplink.query).to eq(id: '_-1P')
+  end
+
   context 'link with scheme only' do
     subject { described_class.new('deep://') }
 
