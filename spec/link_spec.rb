@@ -1,14 +1,6 @@
 require 'spec_helper'
 
 describe Link do
-  it 'works with a string' do
-    expect { described_class.new('test://lol') }.to_not raise_exception
-  end
-
-  it 'works with an URI instance' do
-    expect { described_class.new(URI.parse('test://lol')) }.to_not raise_exception
-  end
-
   context 'link with scheme only' do
     subject { described_class.new('deep://') }
 
@@ -124,12 +116,18 @@ describe Link do
 
     describe '#remove_query' do
       it 'removes a parameter correctly' do
-        one.remove_query(:query)
-        multiple.remove_query(:query)
+        expect(one.remove_query(:query)).to eq('string')
+        expect(multiple.remove_query(:query)).to eq('string')
 
         expect(one.query).to be_empty
         expect(one.has_query?).to be_falsy
         expect(multiple.query).to eq(two: '2')
+      end
+
+      it 'removes multiple parameters correctly' do
+        expect(multiple.remove_query(:query, :two)).to eq(['string', '2'])
+
+        expect(multiple.to_s).to eq('multiple://link/for')
       end
     end
 

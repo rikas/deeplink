@@ -24,6 +24,7 @@ Just call `Deeplink.parse` with a deep link String and then you can read the sch
 
 ```ruby
 deeplink = Deeplink.parse('foursquare://checkins/12932')
+
 deeplink.scheme # => "foursquare"
 deeplink.path   # => "/checkins/12932"
 deeplink.to_s   # => "foursquare://checkins/12932"
@@ -35,6 +36,7 @@ To get the query parameters of a link use `query` method.
 
 ```ruby
 deeplink = Deeplink.parse('foursquare://checkins/209823?test=true')
+
 deeplink.query # => { :test => "true" }
 ```
 
@@ -44,22 +46,33 @@ You can add one or more query parameters sending a Hash to `add_query`.
 
 ```ruby
 deeplink = Deeplink.parse('foursquare://checkins/20982')
-deeplink.add_query(foo: 'bar')   # => { :foo => "bar" }
-deeplink.to_s                    # => "foursquare://checkins/20982?foo=bar"
+
+deeplink.add_query(foo: 'bar') # => { :foo => "bar" }
+deeplink.to_s                  # => "foursquare://checkins/20982?foo=bar"
 
 deeplink = Deeplink.parse('foursquare://checkins/20982')
+
 deeplink.add_query(foo: 'bar', biz: 'baz') # => { :foo => "bar", :biz => "baz" }
 deeplink.to_s                              # => "foursquare://checkins/20982?foo=bar&biz=baz"
 ```
 
 #### Removing a query parameter
 
-To remove query parameters call `remove_query` with the key that you want to remove.
+To remove query parameters call `remove_query` with the key (or list of keys) that you want to
+remove. The method will return the value of the deleted key(s).
 
 ```ruby
 deeplink = Deeplink.parse('foursquare://checkins/20982?foo=bar')
+
 deeplink.remove_query(:foo) # => "bar"
 deeplink.to_s               # => "foursquare://checkins/20982"
+```
+
+```ruby
+deeplink = Deeplink.parse('foursquare://checkins/20982?foo=bar&fu=baz')
+
+deeplink.remove_query(:foo, :fu) # => ["bar", "baz"]
+deeplink.to_s                    # => "foursquare://checkins/20982"
 ```
 
 ## Development
