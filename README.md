@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rikas/deeplink.svg?branch=master)](https://travis-ci.org/rikas/deeplink) [![Build Status](https://travis-ci.org/rikas/deeplink.svg?branch=master)](https://travis-ci.org/rikas/deeplink)
+[![Build Status](https://travis-ci.org/rikas/deeplink.svg?branch=master)](https://travis-ci.org/rikas/deeplink) [![Dependency Status](https://gemnasium.com/rikas/deeplink.svg)](https://gemnasium.com/rikas/deeplink)
 
 # Deeplink
 
