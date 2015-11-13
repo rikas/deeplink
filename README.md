@@ -1,4 +1,10 @@
+[![Build Status](https://travis-ci.org/rikas/deeplink.svg?branch=master)](https://travis-ci.org/rikas/deeplink)
+
 # Deeplink
+
+Handle deep links in an easy way.
+
+This gem needs ruby version >= 2.
 
 ## Installation
 
