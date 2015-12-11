@@ -1,0 +1,14 @@
+require: rubocop-rspec
+
+# Configuration parameters: AllowURI, URISchemes.
+Metrics/LineLength:
+  Max: 100
+
+# Offense count: 6
+# Configuration parameters: Exclude.
+Style/Documentation:
+  Enabled: false
+
+# Assignment Branch Condition size
+Metrics/AbcSize:
+  Max: 25
