@@ -3,5 +3,5 @@
 require 'bundler/setup'
 require 'deeplink'
 
-require "pry"
+require 'pry'
 Pry.start
