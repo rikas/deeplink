@@ -72,22 +72,22 @@ module Deeplink
 
     # Returns the link as a String
     def to_s
-      string = "#{scheme}:/#{path}"
+      uri = "#{scheme}:/#{path}"
 
       if has_query?
         query_string = query.map { |key, value| "#{key}=#{value}" }.join('&')
-        string << "?#{query_string}"
+        uri << "?#{query_string}"
       end
 
-      string
+      uri
     end
 
     private
 
-    def parse(string)
+    def parse(url)
       # Because URI is dumb and thinks that every uri needs to have a host. Adding an extra slash
       # we are basically tricking URI to think that host is nil (and avoid errors).
-      uri = string.sub(%r{://}, ':///')
+      uri = url.sub(%r{://}, ':///')
 
       URI.parse(uri)
     end
