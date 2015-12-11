@@ -17,6 +17,15 @@ describe Link do
     expect(deeplink.query).to eq(id: '_-1P')
   end
 
+  it 'returns an empty link if nil if given' do
+    deeplink = described_class.new(nil)
+
+    expect(deeplink.query).to be_nil
+    expect(deeplink.path).to be_nil
+    expect(deeplink.query?).to be_falsy
+    expect(deeplink.to_s).to eq('')
+  end
+
   context 'link with scheme only' do
     subject { described_class.new('deep://') }
 
@@ -26,9 +35,9 @@ describe Link do
       expect(subject.query).to be_nil
     end
 
-    describe '#has_query?' do
+    describe '#query?' do
       it 'returns false' do
-        expect(subject.has_query?).to be_falsy
+        expect(subject.query?).to be_falsy
       end
     end
 
@@ -36,7 +45,7 @@ describe Link do
       it 'adds a parameter correctly' do
         subject.add_query(teste: 1)
 
-        expect(subject.has_query?).to be_truthy
+        expect(subject.query?).to be_truthy
         expect(subject.query).to include(:teste)
       end
     end
@@ -67,18 +76,18 @@ describe Link do
         normal.add_query(foo: 'bar', fizz: 'baz')
         trailing_slash.add_query(bah: 'meh')
 
-        expect(normal.has_query?).to be_truthy
-        expect(trailing_slash.has_query?).to be_truthy
+        expect(normal.query?).to be_truthy
+        expect(trailing_slash.query?).to be_truthy
 
         expect(normal.query).to include(:foo, :fizz)
         expect(trailing_slash.query).to include(:bah)
       end
     end
 
-    describe '#has_query?' do
+    describe '#query?' do
       it 'returns false' do
-        expect(normal.has_query?).to be_falsy
-        expect(trailing_slash.has_query?).to be_falsy
+        expect(normal.query?).to be_falsy
+        expect(trailing_slash.query?).to be_falsy
       end
     end
 
@@ -104,10 +113,10 @@ describe Link do
       expect(multiple.query).to eq(query: 'string', two: '2')
     end
 
-    describe '#has_query?' do
+    describe '#query?' do
       it 'returns trye' do
-        expect(one.has_query?).to be_truthy
-        expect(multiple.has_query?).to be_truthy
+        expect(one.query?).to be_truthy
+        expect(multiple.query?).to be_truthy
       end
     end
 
@@ -116,10 +125,10 @@ describe Link do
         one.add_query(test: 1)
         multiple.add_query(bar: 'scumm')
 
-        expect(one.has_query?).to be_truthy
+        expect(one.query?).to be_truthy
         expect(one.query).to eq(query: 'string', test: '1')
 
-        expect(multiple.has_query?).to be_truthy
+        expect(multiple.query?).to be_truthy
         expect(multiple.query).to eq(query: 'string', two: '2', bar: 'scumm')
       end
 
@@ -136,12 +145,12 @@ describe Link do
         expect(multiple.remove_query(:query)).to eq('string')
 
         expect(one.query).to be_empty
-        expect(one.has_query?).to be_falsy
+        expect(one.query?).to be_falsy
         expect(multiple.query).to eq(two: '2')
       end
 
       it 'removes multiple parameters correctly' do
-        expect(multiple.remove_query(:query, :two)).to eq(['string', '2'])
+        expect(multiple.remove_query(:query, :two)).to eq(%w(string 2))
 
         expect(multiple.to_s).to eq('multiple://link/for')
       end

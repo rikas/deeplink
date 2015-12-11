@@ -9,6 +9,8 @@ module Deeplink
     attr_reader :query
 
     def initialize(uri)
+      return unless uri
+
       uri = parse(uri)
 
       self.scheme = uri.scheme
@@ -59,22 +61,26 @@ module Deeplink
     #
     #   deeplink = Deeplink.parse("link://directions")
     #
-    #   deeplink.has_query?             # => false
+    #   deeplink.query?             # => false
     #
     #   deeplink.add_query(foo: "bar")  # => { :foo => "bar" }
     #
-    #   deeplink.has_query?             # => true
-    def has_query?
+    #   deeplink.query?             # => true
+    def query?
       return false unless query
 
       !query.empty?
     end
 
+    alias_method :has_query?, :query?
+
     # Returns the link as a String
     def to_s
+      return '' unless scheme && path
+
       uri = "#{scheme}:/#{path}"
 
-      if has_query?
+      if query?
         query_string = query.map { |key, value| "#{key}=#{value}" }.join('&')
         uri << "?#{query_string}"
       end
@@ -84,10 +90,10 @@ module Deeplink
 
     private
 
-    def parse(url)
+    def parse(original_uri)
       # Because URI is dumb and thinks that every uri needs to have a host. Adding an extra slash
       # we are basically tricking URI to think that host is nil (and avoid errors).
-      uri = url.sub(%r{://}, ':///')
+      uri = original_uri.sub(%r{://}, ':///')
 
       URI.parse(uri)
     end
