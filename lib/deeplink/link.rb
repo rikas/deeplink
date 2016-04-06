@@ -114,18 +114,15 @@ module Deeplink
       return unless query_str
 
      param_name_value_pairs = query_str.scan(/([^&=]+)=([^&#{}]*)/)
+
+     # We can't use just .to_h in param_name_value_pairs because if ruby < 2.1
      array_to_h(param_name_value_pairs)
     end
 
-    #~~~~~~~~~~~~~~
-    private 
-    
+    private
+
     def array_to_h(array)
-      if array.respond_to?(:to_h)
-        array.to_h
-      else
-        Hash[*array.flatten]
-      end
+      array.respond_to?(:to_h) ? array.to_h : Hash[*array.flatten]
     end
   end
 end
