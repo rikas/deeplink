@@ -113,7 +113,19 @@ module Deeplink
     def parse_query(query_str)
       return unless query_str
 
-      query_str.scan(/([^&=]+)=([^&#{}]*)/).to_h
+     param_name_value_pairs = query_str.scan(/([^&=]+)=([^&#{}]*)/)
+     array_to_h(param_name_value_pairs)
+    end
+
+    #~~~~~~~~~~~~~~
+    private 
+    
+    def array_to_h(array)
+      if array.respond_to?(:to_h)
+        array.to_h
+      else
+        Hash[*array.flatten]
+      end
     end
   end
 end
