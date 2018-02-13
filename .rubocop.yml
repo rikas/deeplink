@@ -4,11 +4,25 @@ require: rubocop-rspec
 Metrics/LineLength:
   Max: 100
 
-# Offense count: 6
-# Configuration parameters: Exclude.
 Style/Documentation:
   Enabled: false
 
-# Assignment Branch Condition size
+# Assignment Branch Condition size.
 Metrics/AbcSize:
   Max: 25
+
+# Don't force me to write unreadable tests, please.
+RSpec/PredicateMatcher:
+  Enabled: false
+
+# I like to write multiple expectations.
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# Don't care about example length.
+RSpec/ExampleLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'uri'
 require 'cgi'
 
@@ -72,7 +74,7 @@ module Deeplink
       !query.empty?
     end
 
-    alias_method :has_query?, :query?
+    alias has_query? query?
 
     # Returns the link as a String
     def to_s
@@ -82,7 +84,8 @@ module Deeplink
 
       if query?
         query_string = query.map { |key, value| "#{key}=#{value}" }.join('&')
-        uri << "?#{query_string}"
+
+        uri += "?#{query_string}"
       end
 
       uri
@@ -113,13 +116,11 @@ module Deeplink
     def parse_query(query_str)
       return unless query_str
 
-     param_name_value_pairs = query_str.scan(/([^&=]+)=([^&#{}]*)/)
+      param_name_value_pairs = query_str.scan(/([^&=]+)=([^&{}#]*)/)
 
-     # We can't use just .to_h in param_name_value_pairs because if ruby < 2.1
-     array_to_h(param_name_value_pairs)
+      # We can't use just .to_h in param_name_value_pairs because if ruby < 2.1
+      array_to_h(param_name_value_pairs)
     end
-
-    private
 
     def array_to_h(array)
       array.respond_to?(:to_h) ? array.to_h : Hash[*array.flatten]

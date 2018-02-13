@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Link do
@@ -26,38 +28,38 @@ describe Link do
     expect(deeplink.to_s).to eq('')
   end
 
-  context 'link with scheme only' do
-    subject { described_class.new('deep://') }
+  context 'when the link has scheme only' do
+    let(:link) { described_class.new('deep://') }
 
     it 'parses the link correctly' do
-      expect(subject.path).to eq('/')
-      expect(subject.scheme).to eq('deep')
-      expect(subject.query).to be_nil
+      expect(link.path).to eq('/')
+      expect(link.scheme).to eq('deep')
+      expect(link.query).to be_nil
     end
 
     describe '#query?' do
       it 'returns false' do
-        expect(subject.query?).to be_falsy
+        expect(link.query?).to be_falsy
       end
     end
 
     describe '#add_query' do
       it 'adds a parameter correctly' do
-        subject.add_query(teste: 1)
+        link.add_query(teste: 1)
 
-        expect(subject.query?).to be_truthy
-        expect(subject.query).to include(:teste)
+        expect(link.query?).to be_truthy
+        expect(link.query).to include(:teste)
       end
     end
 
     describe '#to_s' do
       it 'returns the correct string' do
-        expect(subject.to_s).to eq('deep://')
+        expect(link.to_s).to eq('deep://')
       end
     end
   end
 
-  context 'link with scheme and path' do
+  context 'when the link has scheme and path' do
     let(:normal) { described_class.new('link1://path/to/link') }
     let(:trailing_slash) { described_class.new('link2://path/link/') }
 
@@ -99,7 +101,7 @@ describe Link do
     end
   end
 
-  context 'complete link' do
+  context 'when the link is complete' do
     let(:one) { described_class.new('complete://link/for/?query=string') }
     let(:multiple) { described_class.new('multiple://link/for?query=string&two=2') }
 
@@ -150,7 +152,7 @@ describe Link do
       end
 
       it 'removes multiple parameters correctly' do
-        expect(multiple.remove_query(:query, :two)).to eq(%w(string 2))
+        expect(multiple.remove_query(:query, :two)).to eq(%w[string 2])
 
         expect(multiple.to_s).to eq('multiple://link/for')
       end
