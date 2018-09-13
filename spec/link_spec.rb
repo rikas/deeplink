@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
 describe Link do
   it 'reads query keys with strange characters' do
     link = 'deep://directions?_id=1'
