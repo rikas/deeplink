@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'uri'
 require 'deeplink/link'
 require 'deeplink/version'
 
