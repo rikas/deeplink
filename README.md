@@ -1,4 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/deeplink.svg)](https://badge.fury.io/rb/deeplink) [![Build Status](https://travis-ci.org/rikas/deeplink.svg?branch=master)](https://travis-ci.org/rikas/deeplink)
+[![Gem Version](https://badge.fury.io/rb/deeplink.svg)](https://badge.fury.io/rb/deeplink)
 
 # Deeplink
 
