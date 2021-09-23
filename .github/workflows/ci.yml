@@ -25,7 +25,7 @@ jobs:
           - ruby-version: 3.0
             env:
               NONE: true
-      fail-fast: true
+      fail-fast: false
     env: ${{ matrix.env }}
 
     steps:

@@ -4,7 +4,7 @@
 
 Handle deep links in an easy way.
 
-This gem needs ruby version >= 2.3
+This gem needs ruby version >= 2.5
 
 ## Installation
 
