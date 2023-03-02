@@ -20,19 +20,23 @@ describe Link do
   it 'returns an empty link if nil if given' do
     deeplink = described_class.new(nil)
 
-    expect(deeplink.query).to be_nil
-    expect(deeplink.path).to be_nil
-    expect(deeplink.query?).to be_falsy
-    expect(deeplink.to_s).to eq('')
+    aggregate_failures do
+      expect(deeplink.query).to be_nil
+      expect(deeplink.path).to be_nil
+      expect(deeplink.query?).to be_falsy
+      expect(deeplink.to_s).to eq('')
+    end
   end
 
   context 'when the link has scheme only' do
     let(:link) { described_class.new('deep://') }
 
     it 'parses the link correctly' do
-      expect(link.path).to eq('/')
-      expect(link.scheme).to eq('deep')
-      expect(link.query).to be_nil
+      aggregate_failures do
+        expect(link.path).to eq('/')
+        expect(link.scheme).to eq('deep')
+        expect(link.query).to be_nil
+      end
     end
 
     describe '#query?' do
@@ -45,8 +49,10 @@ describe Link do
       it 'adds a parameter correctly' do
         link.add_query(teste: 1)
 
-        expect(link.query?).to be_truthy
-        expect(link.query).to include(:teste)
+        aggregate_failures do
+          expect(link.query?).to be_truthy
+          expect(link.query).to include(:teste)
+        end
       end
     end
 
@@ -62,13 +68,15 @@ describe Link do
     let(:trailing_slash) { described_class.new('link2://path/link/') }
 
     it 'parses the link correctly' do
-      expect(normal.path).to eq('/path/to/link')
-      expect(normal.scheme).to eq('link1')
-      expect(normal.query).to be_nil
+      aggregate_failures do
+        expect(normal.path).to eq('/path/to/link')
+        expect(normal.scheme).to eq('link1')
+        expect(normal.query).to be_nil
 
-      expect(trailing_slash.path).to eq('/path/link/')
-      expect(trailing_slash.scheme).to eq('link2')
-      expect(trailing_slash.query).to be_nil
+        expect(trailing_slash.path).to eq('/path/link/')
+        expect(trailing_slash.scheme).to eq('link2')
+        expect(trailing_slash.query).to be_nil
+      end
     end
 
     describe '#add_query' do
@@ -76,25 +84,31 @@ describe Link do
         normal.add_query(foo: 'bar', fizz: 'baz')
         trailing_slash.add_query(bah: 'meh')
 
-        expect(normal.query?).to be_truthy
-        expect(trailing_slash.query?).to be_truthy
+        aggregate_failures do
+          expect(normal.query?).to be_truthy
+          expect(trailing_slash.query?).to be_truthy
 
-        expect(normal.query).to include(:foo, :fizz)
-        expect(trailing_slash.query).to include(:bah)
+          expect(normal.query).to include(:foo, :fizz)
+          expect(trailing_slash.query).to include(:bah)
+        end
       end
     end
 
     describe '#query?' do
       it 'returns false' do
-        expect(normal.query?).to be_falsy
-        expect(trailing_slash.query?).to be_falsy
+        aggregate_failures do
+          expect(normal.query?).to be_falsy
+          expect(trailing_slash.query?).to be_falsy
+        end
       end
     end
 
     describe '#to_s' do
       it 'returns the correct string' do
-        expect(normal.to_s).to eq('link1://path/to/link')
-        expect(trailing_slash.to_s).to eq('link2://path/link/')
+        aggregate_failures do
+          expect(normal.to_s).to eq('link1://path/to/link')
+          expect(trailing_slash.to_s).to eq('link2://path/link/')
+        end
       end
     end
   end
@@ -104,19 +118,23 @@ describe Link do
     let(:multiple) { described_class.new('multiple://link/for?query=string&two=2') }
 
     it 'parses the link correctly' do
-      expect(one.path).to eq('/link/for/')
-      expect(one.scheme).to eq('complete')
-      expect(one.query).to eq(query: 'string')
+      aggregate_failures do
+        expect(one.path).to eq('/link/for/')
+        expect(one.scheme).to eq('complete')
+        expect(one.query).to eq(query: 'string')
 
-      expect(multiple.path).to eq('/link/for')
-      expect(multiple.scheme).to eq('multiple')
-      expect(multiple.query).to eq(query: 'string', two: '2')
+        expect(multiple.path).to eq('/link/for')
+        expect(multiple.scheme).to eq('multiple')
+        expect(multiple.query).to eq(query: 'string', two: '2')
+      end
     end
 
     describe '#query?' do
       it 'returns trye' do
-        expect(one.query?).to be_truthy
-        expect(multiple.query?).to be_truthy
+        aggregate_failures do
+          expect(one.query?).to be_truthy
+          expect(multiple.query?).to be_truthy
+        end
       end
     end
 
@@ -125,11 +143,13 @@ describe Link do
         one.add_query(test: 1)
         multiple.add_query(bar: 'scumm')
 
-        expect(one.query?).to be_truthy
-        expect(one.query).to eq(query: 'string', test: '1')
+        aggregate_failures do
+          expect(one.query?).to be_truthy
+          expect(one.query).to eq(query: 'string', test: '1')
 
-        expect(multiple.query?).to be_truthy
-        expect(multiple.query).to eq(query: 'string', two: '2', bar: 'scumm')
+          expect(multiple.query?).to be_truthy
+          expect(multiple.query).to eq(query: 'string', two: '2', bar: 'scumm')
+        end
       end
 
       it 'adds_multiple parameters correctly' do
@@ -141,25 +161,30 @@ describe Link do
 
     describe '#remove_query' do
       it 'removes a parameter correctly' do
-        expect(one.remove_query(:query)).to eq('string')
-        expect(multiple.remove_query(:query)).to eq('string')
+        aggregate_failures do
+          expect(one.remove_query(:query)).to eq('string')
+          expect(multiple.remove_query(:query)).to eq('string')
 
-        expect(one.query).to be_empty
-        expect(one.query?).to be_falsy
-        expect(multiple.query).to eq(two: '2')
+          expect(one.query).to be_empty
+          expect(one.query?).to be_falsy
+          expect(multiple.query).to eq(two: '2')
+        end
       end
 
       it 'removes multiple parameters correctly' do
-        expect(multiple.remove_query(:query, :two)).to eq(%w[string 2])
-
-        expect(multiple.to_s).to eq('multiple://link/for')
+        aggregate_failures do
+          expect(multiple.remove_query(:query, :two)).to eq(%w[string 2])
+          expect(multiple.to_s).to eq('multiple://link/for')
+        end
       end
     end
 
     describe '#to_s' do
       it 'returns the correct string' do
-        expect(one.to_s).to eq('complete://link/for/?query=string')
-        expect(multiple.to_s).to eq('multiple://link/for?query=string&two=2')
+        aggregate_failures do
+          expect(one.to_s).to eq('complete://link/for/?query=string')
+          expect(multiple.to_s).to eq('multiple://link/for?query=string&two=2')
+        end
       end
 
       it 'returns the correct string after adding a query param' do

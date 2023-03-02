@@ -23,10 +23,6 @@ Metrics/AbcSize:
 RSpec/PredicateMatcher:
   Enabled: false
 
-# I like to write multiple expectations.
-RSpec/MultipleExpectations:
-  Enabled: false
-
 # Don't care about example length.
 RSpec/ExampleLength:
   Enabled: false
