@@ -13,9 +13,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - ruby-version: 2.5
-            env:
-              NONE: true
           - ruby-version: 2.6
             env:
               NONE: true
@@ -23,6 +20,12 @@ jobs:
             env:
               NONE: true
           - ruby-version: 3.0
+            env:
+              NONE: true
+          - ruby-version: 3.1
+            env:
+              NONE: true
+          - ruby-version: 3.2
             env:
               NONE: true
       fail-fast: false
