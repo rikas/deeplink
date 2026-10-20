@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Link do
+RSpec.describe Deeplink::Link do
   it 'reads query keys with strange characters' do
     link = 'deep://directions?_id=1'
 
@@ -15,6 +15,18 @@ describe Link do
     deeplink = described_class.new(link)
 
     expect(deeplink.query).to eq(id: '_-1P')
+  end
+
+  it 'does not double encode already encoded query values' do
+    deeplink = described_class.new('deep://search?q=hello%20world')
+
+    expect(deeplink.to_s).to eq('deep://search?q=hello+world')
+  end
+
+  it 'returns nil when removing a query without keys' do
+    deeplink = described_class.new('deep://search?q=1')
+
+    expect(deeplink.remove_query).to be_nil
   end
 
   it 'returns an empty link if nil if given' do

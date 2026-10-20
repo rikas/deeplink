@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-
-require 'deeplink/version'
+require_relative 'lib/deeplink/version'
 
 Gem::Specification.new do |spec|
-  spec.required_ruby_version = '>= 2.5.0'
   spec.name          = 'deeplink'
   spec.version       = Deeplink::VERSION
   spec.authors       = ['Ricardo Otero']
@@ -17,9 +13,12 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/rikas/deeplink'
   spec.license       = 'MIT'
 
-  spec.files         = Dir.glob('{lib}/**/*', File::FNM_DOTMATCH)
-  spec.bindir        = 'exe'
+  spec.required_ruby_version = '>= 3.2'
+
+  spec.files         = Dir['lib/**/*.rb', 'LICENSE.txt', 'README.md']
   spec.require_paths = ['lib']
 
+  spec.metadata['source_code_uri']       = spec.homepage
+  spec.metadata['bug_tracker_uri']       = "#{spec.homepage}/issues"
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

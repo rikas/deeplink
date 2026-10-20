@@ -1,47 +1,51 @@
-name: Lint and test
+name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: [master]
   pull_request:
-    branches: ['**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    name: Ruby ${{ matrix.ruby-version }} test
+    name: Ruby ${{ matrix.ruby-version }}
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        include:
-          - ruby-version: 2.6
-            env:
-              NONE: true
-          - ruby-version: 2.7
-            env:
-              NONE: true
-          - ruby-version: 3.0
-            env:
-              NONE: true
-          - ruby-version: 3.1
-            env:
-              NONE: true
-          - ruby-version: 3.2
-            env:
-              NONE: true
       fail-fast: false
-    env: ${{ matrix.env }}
+      matrix:
+        # Versions are quoted so YAML doesn't read e.g. 4.0 as the number 4.
+        ruby-version: ['3.2', '3.3', '3.4', '4.0']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
-      - name: Set up ruby
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          bundler-cache: true
 
       - name: Run RSpec
         run: bundle exec rspec
 
-      - name: Run Rubocop
+  lint:
+    name: RuboCop
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+
+      - name: Run RuboCop
         run: bundle exec rubocop --format github

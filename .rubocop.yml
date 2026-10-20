@@ -1,11 +1,11 @@
-require:
+plugins:
   - rubocop-packaging
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.2
   NewCops: enable
 
 # Configuration parameters: AllowURI, URISchemes.

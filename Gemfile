@@ -5,11 +5,11 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in deeplink.gemspec
 gemspec
 
-gem 'bundler'
-gem 'pry-byebug'
+gem 'debug'
+gem 'irb'
 gem 'rake'
-gem 'rspec'
-gem 'rubocop', '~> 1.46'
+gem 'rspec', '~> 3.13'
+gem 'rubocop', '~> 1.92'
 gem 'rubocop-packaging'
 gem 'rubocop-performance'
 gem 'rubocop-rake'

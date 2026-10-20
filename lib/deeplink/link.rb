@@ -1,7 +1,13 @@
 # frozen_string_literal: true
 
 require 'uri'
-require 'cgi'
+
+# Ruby 4.0 removed the CGI library; CGI.escape and CGI.unescape now live in cgi/escape.
+if RUBY_VERSION >= '4'
+  require 'cgi/escape'
+else
+  require 'cgi/util'
+end
 
 module Deeplink
   class Link
@@ -50,11 +56,9 @@ module Deeplink
     def remove_query(*keys)
       return unless query
 
-      if keys.size > 1
-        keys.map { |key| query.delete(key.to_sym) }
-      else
-        query.delete(keys.first.to_sym)
-      end
+      values = keys.map { |key| query.delete(key.to_sym) }
+
+      keys.size > 1 ? values : values.first
     end
 
     # Returns true if the link has a query string or false otherwise
@@ -116,12 +120,9 @@ module Deeplink
     def parse_query(query_str)
       return unless query_str
 
-      param_name_value_pairs = query_str.scan(/([^&=]+)=([^&{}#]*)/)
-      param_name_value_pairs.to_h
-    end
-
-    def array_to_h(array)
-      array.respond_to?(:to_h) ? array.to_h : Hash[*array.flatten]
+      # Values are unescaped here because #sanitize escapes them again; otherwise already encoded
+      # values (e.g. "%20") would end up double encoded.
+      query_str.scan(/([^&=]+)=([^&{}#]*)/).to_h { |key, value| [key, CGI.unescape(value)] }
     end
   end
 end
