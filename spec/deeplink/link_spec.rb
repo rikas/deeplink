@@ -29,6 +29,62 @@ RSpec.describe Deeplink::Link do
     expect(deeplink.remove_query).to be_nil
   end
 
+  it 'stores query values decoded and encodes them in #to_s' do
+    deeplink = described_class.new('deep://search?q=a%20b&tag=c+d')
+    deeplink.add_query(name: 'e&f')
+
+    aggregate_failures do
+      expect(deeplink.query).to eq(q: 'a b', tag: 'c d', name: 'e&f')
+      expect(deeplink.to_s).to eq('deep://search?q=a+b&tag=c+d&name=e%26f')
+    end
+  end
+
+  it 'encodes query values that are not strings' do
+    deeplink = described_class.new('deep://search')
+    deeplink.add_query(q: :'a b', page: 2)
+
+    aggregate_failures do
+      expect(deeplink.query).to eq(q: 'a b', page: '2')
+      expect(deeplink.to_s).to eq('deep://search?q=a+b&page=2')
+    end
+  end
+
+  it 'keeps query parameters without a value' do
+    deeplink = described_class.new('deep://search?flag&empty=&q=1')
+    deeplink.add_query(other: nil)
+
+    aggregate_failures do
+      expect(deeplink.query).to eq(flag: nil, empty: '', q: '1', other: nil)
+      expect(deeplink.to_s).to eq('deep://search?flag&empty=&q=1&other')
+    end
+  end
+
+  it 'keeps the fragment' do
+    deeplink = described_class.new('deep://page?a=1#section%201')
+
+    aggregate_failures do
+      expect(deeplink.fragment).to eq('section%201')
+      expect(deeplink.query).to eq(a: '1')
+      expect(deeplink.to_s).to eq('deep://page?a=1#section%201')
+    end
+  end
+
+  it 'parses links without a double slash' do
+    opaque = described_class.new('deep:foo?a=1#f')
+    absolute = described_class.new('deep:/foo')
+
+    aggregate_failures do
+      expect(opaque.scheme).to eq('deep')
+      expect(opaque.path).to eq('foo')
+      expect(opaque.query).to eq(a: '1')
+      expect(opaque.fragment).to eq('f')
+      expect(opaque.to_s).to eq('deep:foo?a=1#f')
+
+      expect(absolute.path).to eq('/foo')
+      expect(absolute.to_s).to eq('deep:/foo')
+    end
+  end
+
   it 'returns an empty link if nil if given' do
     deeplink = described_class.new(nil)
 

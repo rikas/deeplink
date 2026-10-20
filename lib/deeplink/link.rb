@@ -11,9 +11,11 @@ end
 
 module Deeplink
   class Link
-    attr_accessor :scheme, :path
+    # The fragment is kept as given, so it should already be percent-encoded.
+    attr_accessor :scheme, :path, :fragment
 
-    # To add and remove items to the query string use #add_query and #remove_query
+    # Query values are stored decoded and only encoded by #to_s. To add and remove items to the
+    # query string use #add_query and #remove_query.
     attr_reader :query
 
     def initialize(uri)
@@ -22,9 +24,12 @@ module Deeplink
       uri = parse(uri)
 
       self.scheme = uri.scheme
-      self.path = uri.path
+      self.fragment = uri.fragment
 
-      @query = sanitize(parse_query(uri.query)) if uri.query
+      # Links without "//" (e.g. "deep:foo?a=1") are opaque, and URI leaves the query in there.
+      self.path, query_string = uri.opaque ? uri.opaque.split('?', 2) : [uri.path, uri.query]
+
+      @query = parse_query(query_string) if query_string
     end
 
     # Add query parameters to the link. You can add one or more parameters since this method
@@ -37,6 +42,8 @@ module Deeplink
     #   deeplink.add_query(lat: 38.7179233, lon: -9.150129)
     #
     #   deeplink.to_s # => "link://directions?lat=38.7179233&lon=-9.150129"
+    #
+    # Values are converted to strings. A nil value adds a parameter without a value ("?flag").
     def add_query(hash)
       @query ||= {}
 
@@ -84,13 +91,9 @@ module Deeplink
     def to_s
       return '' unless scheme && path
 
-      uri = "#{scheme}:/#{path}"
-
-      if query?
-        query_string = query.map { |key, value| "#{key}=#{value}" }.join('&')
-
-        uri += "?#{query_string}"
-      end
+      uri = @double_slash ? "#{scheme}:/#{path}" : "#{scheme}:#{path}"
+      uri += "?#{query_string}" if query?
+      uri += "##{fragment}" if fragment
 
       uri
     end
@@ -98,31 +101,34 @@ module Deeplink
     private
 
     def parse(original_uri)
+      @double_slash = original_uri.match?(%r{\A[^:/?#]+://})
+
       # Because URI is dumb and thinks that every uri needs to have a host. Adding an extra slash
       # we are basically tricking URI to think that host is nil (and avoid errors).
-      uri = original_uri.sub(%r{://}, ':///')
+      uri = @double_slash ? original_uri.sub('://', ':///') : original_uri
 
       URI.parse(uri)
     end
 
     def sanitize(hash)
-      sanitized = {}
-
-      hash.each_key do |key|
-        value = hash[key].is_a?(String) ? CGI.escape(hash[key]) : hash[key].to_s
-
-        sanitized[key.to_sym] = value
-      end
-
-      sanitized
+      hash.to_h { |key, value| [key.to_sym, value&.to_s] }
     end
 
     def parse_query(query_str)
-      return unless query_str
+      query_str.split('&').each_with_object({}) do |pair, params|
+        key, value = pair.split('=', 2)
+        next if key.nil? || key.empty?
 
-      # Values are unescaped here because #sanitize escapes them again; otherwise already encoded
-      # values (e.g. "%20") would end up double encoded.
-      query_str.scan(/([^&=]+)=([^&{}#]*)/).to_h { |key, value| [key, CGI.unescape(value)] }
+        params[CGI.unescape(key).to_sym] = value && CGI.unescape(value)
+      end
+    end
+
+    def query_string
+      query.map do |key, value|
+        key = CGI.escape(key.to_s)
+
+        value.nil? ? key : "#{key}=#{CGI.escape(value)}"
+      end.join('&')
     end
   end
 end
