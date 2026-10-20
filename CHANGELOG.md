@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- `query` returns decoded values (`a b` instead of `a+b`). Values are encoded only by `to_s`, and
+  query keys are now encoded too.
+- `add_query` with a `nil` value adds a parameter without a value (`?flag`) instead of `flag=`.
+
+### Fixes
+
+- Keep URL fragments (`deep://page#section`), available through `fragment`.
+- Keep query parameters without a value (`?flag`), stored with a `nil` value.
+- Encode query values that are not strings, such as symbols.
+- Parse links without a double slash (`deep:foo`, `deep:/foo`) instead of returning `''`.
+- Parse query values containing `{` or `}` in full.
+
+### Development
+
+- Add `changelog_uri` to the gem metadata and ship `CHANGELOG.md` with the gem.
+
 ## 2.0.0 (2026-10-20)
 
 ### Breaking changes
